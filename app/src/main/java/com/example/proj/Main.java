@@ -1,5 +1,31 @@
 package com.example.proj;
 
+import android.Manifest;
+import android.app.AlertDialog;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ListView;
+import android.widget.SimpleAdapter;
+import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.AppComponentFactory;
+
+import com.example.util.AIPermissionRequest;
+import com.example.util.ActivityBean;
+import com.example.util.ActivityUtils;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
 // 메인 클래스 (ListView 항목 클릭 이벤트 처리 인터페이스 구현)
 public class Main extends AppComponentFactory implements AdapterView.OnItemClickListener {
     private static final String TAG = "Main";
