@@ -1,8 +1,5 @@
 package com.example.proj;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-
 // 메인 클래스 (ListView 항목 클릭 이벤트 처리 인터페이스 구현)
 public class Main extends AppComponentFactory implements AdapterView.OnItemClickListener {
     private static final String TAG = "Main";
@@ -62,6 +59,8 @@ public class Main extends AppComponentFactory implements AdapterView.OnItemClick
 
         listView.setAdapter(adapter); // 목록 표시
         listView.setDividerHeight(2); // 목록 항목 간 구분선 높이 설정
+
+        listView.setOnItemClickListener(this); // 목록 항목 클릭 이벤트 리스너를 현재 클래스로 지정
     }
 
     // 툴바 메뉴 항목이 선택 되었을 때 호출
@@ -74,6 +73,20 @@ public class Main extends AppComponentFactory implements AdapterView.OnItemClick
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    // AdapterView 인터페이스 구현
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        // 클릭된 항목에 저장된 데이터를 가져옴
+        Map<?, ?> map = (HashMap<?, ?>) parent.getAdapter().getItem(position);
+
+        // 저장해 둔 다음 Activity의 Class 객체 추출
+        Class<?> clazz = (Class<?>) map.get("activity_class");
+
+        // Intent를 생성하여 추출된 Class (Activity) 목표로 설정하고 실행
+        Intent it = new Intent(this, clazz);
+        this.startActivity(it);
     }
 
     // 기본 구조 설정 및 Activity 생명주기 메서드 오버라이드
