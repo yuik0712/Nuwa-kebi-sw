@@ -8,6 +8,10 @@ public class DisablePowerkeyActivity extends BaseAppCompatActivity {
     // 기본 UI 및 Activity 생명주기
     ImageButton mCloseBtn; // UI 요소: 닫기 버튼
 
+    // 로봇 API 연결 및 연결관리
+    NuwaRobotAPI mRobotAPI; // 로봇 제어 API 객체
+    IClientId mClientId; // 클라이언트 식별자
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         // Activity 기본 설정
@@ -23,7 +27,16 @@ public class DisablePowerkeyActivity extends BaseAppCompatActivity {
             public void onClick(View view) {
                 finish(); // Activity 종료
             }
-        })
+        });
+
+        // Nuwa 로봇 API 연결 및 연결 관리 로직
+        mClientId = new IClientId(this.getPackageName()); // 로봇 API 클라이언트 식별자 초기화
+
+        // 로봇 API 객체 초기화 (연결 시작)
+        mRobotAPI = new NuwaRobotAPI(this, mClientId);
+        Log.d(TAG, "register EventListener");
+
+        mRobotAPI.registerRobotEvenListener(robotEventListener); // 로봇 이벤트 리스너 등록
     }
 
     // 기본 UI 및 Activity 생명주기 설정 (BaseAppCompatActivity 추상 메서드)
@@ -42,6 +55,14 @@ public class DisablePowerkeyActivity extends BaseAppCompatActivity {
     protected void onResume() {
         super.onResume();
         // hideSystemUi(); // 시스템 UI 숨김 기능 호출 주석 처리
+    }
+
+    // UI를 벗어날 때 로봇 API 사용을 위해 전원 키를 임시 활성화 (곧 제거할 기능...)
+    protected void onPause() {
+        super.onPause();
+        if(mRobotAPI != null) {
+            mRobotAPI.enablePowerKey();
+        }
     }
 
     @Override
