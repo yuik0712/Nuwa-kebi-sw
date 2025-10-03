@@ -25,6 +25,11 @@ public class DisablePowerkeyActivity extends BaseAppCompatActivity {
         mCloseBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                // 닫기 버튼 클릭 시 실행
+                if(mRobotAPI != null) {
+                    // 핵심 기능: 앱 종료 전, 비활성화 했던 전원 버튼 기능 재 활성화
+                    mRobotAPI.enablePowerKey();
+                }
                 finish(); // Activity 종료
             }
         });
@@ -85,7 +90,7 @@ public class DisablePowerkeyActivity extends BaseAppCompatActivity {
     }
     */
 
-    // Nuwa 로봇 이벤트 리스너
+    //
     RobotEventListener robotEventListener = new RobotEventListener() {
         @Override
         public void onWikiServiceStart() {
