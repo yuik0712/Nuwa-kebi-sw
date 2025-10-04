@@ -7,6 +7,10 @@ public class FaceControlActivity extends BaseAppCompatActivity {
     ImageButton mCloseBtn;
     Button mBtn_start;
 
+    NuwaRobotAPI mRobotAPI;
+    IClientId mClientId;
+    Context mContext ;
+
     // Activity 상수 정의
     private static final String TTS = "kebbi is speaking with face";
     private static final long FACE_MOUTH_SPEED = 200;
@@ -15,15 +19,25 @@ public class FaceControlActivity extends BaseAppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_facecontrol_show);
+        mContext = this; // Context 초기화
 
         // 닫기 버튼 초기화 및 종료 로직
         mCloseBtn = findViewById(R.id.imgbtn_quit);
         mCloseBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                // 종료 전 powerKey 활성화 로직 추가
+                if(mRobotAPI!=null) {
+                    mRobotAPI.enablePowerKey();
+                }
+
                 finish();
             }
         });
+
+        // 초기 Nuwa API 객체
+        mClientId = new IClientId(this.getPackageName());
+        mRobotAPI = new NuwaRobotAPI(this, mClientId);
     }
 
     // BaseAppCompatActivity 추상 메서드 구현
@@ -47,6 +61,12 @@ public class FaceControlActivity extends BaseAppCompatActivity {
     @Override
     protected void onPause () {
         super.onPause();
+        Log.d(TAG, "onPause");
+
+        // API 자원 해제 로직 추가
+        if(mRobotAPI != null) {
+            mRobotAPI.release();
+        }
     }
 
     @Override
