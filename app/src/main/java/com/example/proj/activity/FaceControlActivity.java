@@ -1,11 +1,17 @@
 package com.example.proj.activity;
 
+import android.view.View;
+
 public class FaceControlActivity extends BaseAppCompatActivity {
     private final static String TAG = "FaceControlActivity";
 
     // UI 요소 선언
     ImageButton mCloseBtn;
     Button mBtn_start;
+
+    NuwaRobotAPI mRobotAPI;
+    IClientId mClientId;
+    Context mContext ;
 
     // Activity 상수 정의
     private static final String TTS = "kebbi is speaking with face";
@@ -15,6 +21,7 @@ public class FaceControlActivity extends BaseAppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_facecontrol_show);
+        mContext = this; // Context 초기화
 
         // 닫기 버튼 초기화 및 종료 로직
         mCloseBtn = findViewById(R.id.imgbtn_quit);
@@ -24,10 +31,25 @@ public class FaceControlActivity extends BaseAppCompatActivity {
                 finish();
             }
         });
-    }
 
-    // 시작 버튼 초기화 (로직은 나중에 추가됨)
-    mBtn_start = findViewById(R.id.btn_start);
+        // 시작 버튼 초기화
+        mBtn_start = findViewById(R.id.btn_start);
+        // 닫기 버튼 로직 수정 (mRobotAPI 사용 추가)
+        mCloseBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // 종료 전 powerKey 활성화 로직 추가
+                if(mRobotAPI!=null){
+                    mRobotAPI.enablePowerKey();
+                }
+                finish();
+            }
+        });
+
+        // 초기 Nuwa API 객체
+        mClientId = new IClientId(this.getPackageName());
+        mRobotAPI = new NuwaRobotAPI(this,mClientId);
+    }
 
     // BaseAppCompatActivity 추상 메서드 구현
     @Override
@@ -48,8 +70,14 @@ public class FaceControlActivity extends BaseAppCompatActivity {
 //    }
 
     @Override
-    protected void onPause () {
+    protected void onPause() {
         super.onPause();
+        Log.d(TAG,"onPause ");
+
+        // API 자원 해제 로직 추가
+        if(mRobotAPI!=null){
+            mRobotAPI.release();
+        }
     }
 
     @Override
