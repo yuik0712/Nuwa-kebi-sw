@@ -23,18 +23,18 @@ public class FaceControlActivity extends BaseAppCompatActivity {
         setContentView(R.layout.activity_facecontrol_show);
         mContext = this; // Context 초기화
 
-        // 시작 버튼 초기화
-        mBtn_start = findViewById(R.id.btn_start);
-        // 시작 버튼 로직 수정 (showface() 연결)
-        mBtn_start.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showface(TTS); // showface 함수 호출
-            }
-        })
-
         // 닫기 버튼 초기화 및 종료 로직
         mCloseBtn = findViewById(R.id.imgbtn_quit);
+        mCloseBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
+
+        // 시작 버튼 초기화
+        mBtn_start = findViewById(R.id.btn_start);
+        // 닫기 버튼 로직 수정 (mRobotAPI 사용 추가)
         mCloseBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -255,115 +255,8 @@ public class FaceControlActivity extends BaseAppCompatActivity {
         }
     };
 
-    VoiceEventListener voiceEventListener = new VoiceEventListener() {
+    UnityFaceCallback mUnityFaceCallback = new UnityFaceCallback(){
         @Override
-        public void onWakeup(boolean isError, String score, float direction) {
-
-        }
-
-        @Override
-        public void onTTSComplete(boolean isError) {
-            Log.d(TAG, "onTTSComplete:" + !isError);
-            //you could postDelay a timing to hide face for better user experience
-            mouthOff();
-            hideface();
-
-        }
-
-        @Override
-        public void onSpeechRecognizeComplete(boolean isError, ResultType iFlyResult, String json) {
-
-        }
-
-        @Override
-        public void onSpeech2TextComplete(boolean isError, String json) {
-
-        }
-
-        @Override
-        public void onMixUnderstandComplete(boolean isError, ResultType resultType, String s) {
-
-        }
-
-        @Override
-        public void onSpeechState(ListenType listenType, SpeechState speechState) {
-
-        }
-
-        @Override
-        public void onSpeakState(SpeakType speakType, SpeakState speakState) {
-            Log.d(TAG, "onSpeakState:" + speakType + ", state:" + speakState);
-        }
-
-        @Override
-        public void onGrammarState(boolean isError, String s) {
-
-        }
-
-        @Override
-        public void onListenVolumeChanged(ListenType listenType, int i) {
-
-        }
-
-        @Override
-        public void onHotwordChange(HotwordState hotwordState, HotwordType hotwordType, String s) {
-
-        }
-    };
-
-
-    // 로봇의 얼굴 UI를 표시하고 지정된 텍스트를 음성으로 말하게 하는 메서드
-    private void showface(String tts) {
-        // 로봇 API 객체가 유효한지 확인 (초기화 되었는지 확인)
-        if (mRobotAPI != null) {
-            // 유니티 기반의 로봇 얼굴 UI 화면 표시
-            mRobotAPI.UnityFaceManager().showUnity();
-            // 지정된 텍스트를 음섬으로 말하도록 로봇에게 명령
-            mRobotAPI.startTTS(tts);
-
-            // 입 모양 애니메이션 시작 호출 추가
-            mouthOn(FACE_MOUTH_SPEED);
-        } else {
-            // 로봇 API가 null인 경우 로그를 남겨 오류를 알림
-            Log.d(TAG, "=== mNuwaRobotAPI null ===  please init");
-        }
-    }
-
-    // 로봇의 얼굴 UI를 화면에서 숨기는 메서드
-    private void hideface() {
-        // 로봇 API 객체가 유효한지 확인 (초기화되었는지 확인)
-        if (mRobotAPI != null) {
-            // 유니티 기반의 로봇 얼굴 UI를 화면에서 숨김
-            mRobotAPI.UnityFaceManager().hideUnity();
-        } else {
-            // 로봇 API가 null인 경우 로그를 남겨 오류를 알림
-            Log.d(TAG, " === mNuwaRobotAPI null ===  please init");
-        }
-    }
-
-    // 로봇의 입술 움직임을 시작하는 메소드
-    private void mouthOn(long speed) {
-        if (mRobotAPI != null) {
-            // 유니티 기반 얼굴 UI 에서 입술 움직임을 지정된 속도로 시작
-            mRobotAPI.UnityFaceManager().mouthOn(speed);
-        } else {
-            // 로봇 API가 초기화되지 않았을 경우 오류 로그 출력
-            Log.d(TAG, "=== mNuwaRobotAPI null === please init");
-        }
-    }
-
-    // 로봇의 입술 움직임을 멈추는 메소드
-    private void mouthOff() {
-        if (mRobotAPI != null) {
-            // 유니티 기반 얼굴 UI에서 입술 움직임을 멈춤
-            mRobotAPI.UnityFaceManager().mouthOff();
-        } else {
-            // 로봇 API가 초기화되지 않았을 경우 오류 로그 출력
-            Log.d(TAG, "=== mNuwaRobotAPI null === please init");
-        }
-    }
-
-    UnityFaceCallback mUnityFaceCallback = new UnityFaceCallback() {
         public void on_touch_left_eye() {
             Log.d("FaceControl", "on_touch_left_eye()");
         }
