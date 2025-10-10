@@ -1,5 +1,33 @@
 package com.example.proj.activity;
 
+import android.app.AlertDialog;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.ServiceConnection;
+import android.os.Bundle;
+import android.os.IBinder;
+import android.os.RemoteException;
+import android.text.TextUtils;
+import android.util.Log;
+import android.view.View;
+import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.TextView;
+
+import com.example.proj.R;
+import com.example.proj.motion.base.BaseAppCompatActivity;
+import com.example.proj.service.IClientId;
+import com.example.proj.service.agent.NuwaRobotAPI;
+import com.example.proj.service.agent.RobotEventListener;
+import com.example.proj.service.agent.VoiceEventListener;
+import com.example.proj.service.facecontrol.utils.ServiceConnectListener;
+
+import com.nuwarobotics.app.nuwableinterface.BLEConstant
+import com.nuwarobotics.app.nuwableinterface.INuwaBLEInterface;
+
 public class StartBLEConnnection extends BaseAppCompatActivity {
     // UI 요소 선언
     ImageButton mCloseBtn;
