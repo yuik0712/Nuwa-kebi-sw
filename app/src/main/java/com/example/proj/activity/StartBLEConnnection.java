@@ -5,6 +5,7 @@ public class StartBLEConnnection extends BaseAppCompatActivity {
     ImageButton mCloseBtn;
     Button mBtnDemo;
     Context mContext;
+    INuwaBLEInterface mNuwaBLEService = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,9 +39,46 @@ public class StartBLEConnnection extends BaseAppCompatActivity {
 
     @Override
     protected void onDestroy() {
+        // 서비스 바인딩 해제
+        unbindService(mServiceConnection);
         super.onDestroy();
         Log.d(TAG, "onDestroy ");
     }
+
+    // BLE 서비스 연결 객체
+    private final ServiceConnection mServiceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName componentName, IBinder service) {
+            mNuwaBLEService = INuwaBLEInterface.Stub.asInterface(service);
+            Log.e(TAG, "onServiceConnected");
+            try {
+                if (mNuwaBLEService.isBluetoothReady()) {
+                    // 서비스 연결 후 BLE 상태 확인
+                    if (mNuwaBLEService.getBLEStatus(BLEConstant.BLE_MODE_NUWA_THERMOMETER_VSS) == BLEConstant.STATE_CONNECTED) {
+                        // 블루투스가 연결되었습니다.
+                    } else { // 그렇지 않으면,
+                        // 블루투스 연결이 안되었습니다.
+                    }
+                }
+            } catch (RemoteException e) {
+                Log.e(TAG, "exception " + e);
+            }
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName componentName) {
+            mNuwaBLEService = null;
+            Log.e(TAG, "onServiceDisconnected");
+        }
+
+        // Activity 시작 시 BLE 서비스 바인딩 (HealthConstant는 외부에서 정의된 상수 클래스 가정)
+        @Override
+        protected void onStart() {
+            super.onStart();
+            bindService(new Intent(HealthConstant.NUWA_BLE_SERVICE_ACTION).setPackage(HealthConstant.NUWA_BLE_SERVICE_PACKAGE), mServiceConnection, BIND_AUTO_CREATE);
+            Log.d("MyActivity", "onStart() called");
+        }
+    };
 
     // Fullscreen 및 System UI 숨김 기능
     protected void hideSystemUi() {
