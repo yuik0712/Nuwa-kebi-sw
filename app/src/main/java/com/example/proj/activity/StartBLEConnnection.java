@@ -13,6 +13,22 @@ public class StartBLEConnnection extends BaseAppCompatActivity {
         setContentView(R.layout.activity_temperature_measure);
         mContext = this;
 
+        // 시작 버튼 클릭 리스너
+        mBtnDemo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public onClick(View view) {
+                try {
+                    if (mNuwaBLEService.getBLEStatus(BLEConstant.BLE_MODE_NUWA_THERMOMETER_VSS) != BLEConstant.STATE_CONNECTED) {
+                        // 연결 상태가 아닐 경우 설정 (Activity 실향)
+                        Intent intent = new Intent("com.nuwarobotics.health.action.ble_connect");
+                        startActivityForResult(intent, 0);
+                    }
+                } catch (RemoteException e) {
+                    Log.e(TAG, "Get Ble status error:" + e);
+                }
+            }
+        });
+
         // 닫기 버튼 초기화 및 종료 로직
         mCloseBtn = findViewById(R.id.imgbtn_quit);
         mCloseBtn.setOnClickListener(new View.OnClickListener() {
